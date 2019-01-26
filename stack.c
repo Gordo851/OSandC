@@ -10,6 +10,7 @@ int *newStack = NULL;
 int *topOfStack = 0;
 int currentSize;
 int stackSize;
+int *tmp;
 
 void setStackSize( int size)
 {
@@ -18,8 +19,12 @@ void setStackSize( int size)
     stackTop = newStack;
     stackSize = size;
     }
-    newStack = (int*)realloc(newStack, (size*sizeof(int)));
-    stackTop = newStack;
+    tmp = (int*)realloc(newStack, (size*sizeof(int)));
+    if (tmp == NULL)
+    {
+        printf("Could not change size, size selected too small for members of array");
+    }
+    newStack = tmp;
     stackSize = size;
 }
 
@@ -62,6 +67,6 @@ int getStackSize()
 void deleteStack()
 {
     free(newStack);
-
+    newStack = NULL;
     }
 
