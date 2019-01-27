@@ -53,14 +53,14 @@ int main()
   printSetSize( 9);
   printSetSize( 17);
 
-  for( i=0; i<3; i++) {
+  for( i=0; i<15; i++) {
     printPop();
   }
 
-  printSetSize(100);
+  printSetSize( 0);
   printPush(42);
   printPop();
-  deleteStack();
+
   printSetSize( 1);
   printPush(42);
   printPop();
