@@ -5,24 +5,31 @@
 #include <string.h>
 #include <semaphore.h>
 
-//sem_t *mySem
-//sem_init(*mySem, int pshared, unsigned int value);
+pthread_mutex_t mutex;
+pthread_cond_t conditional;
 
 
-void *theMessage(void *ID)
+void* theMessage(void *ID)
 {
     printf("I am the first thread. My thread ID: %d. My pID: %d. The first message\n\n", (int)pthread_self(), (int)getpid());
-    wait(100);
+
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&conditional, &mutex);
     printf("I am the first thread. My ID: %d. My pID: %d. The second message\n\n", (int)pthread_self(), (int)getpid());
-    return NULL;
+    pthread_mutex_unlock(&mutex);
+    pthread_exit(NULL);
 }
-void *theMessageSecondThread(void *ID)
+void* theMessageSecondThread(void *ID)
 {
     printf("I am the second thread. My thread ID: %d. My pID: %d. The first message\n\n", (int)pthread_self(), (int)getpid());
-    printf("I am the second thread. My ID: %d. My pID: %d. The second message\n\n", (int)pthread_self(), (int)getpid());
-    return NULL;
-}
 
+
+    pthread_mutex_lock(&mutex);
+    printf("I am the second thread. My ID: %d. My pID: %d. The second message\n\n", (int)pthread_self(), (int)getpid());
+    pthread_mutex_unlock(&mutex);
+    pthread_cond_signal(&conditional);
+    pthread_exit(NULL);
+}
 
 
 
@@ -34,6 +41,7 @@ int main()
     pthread_create(&thread0, NULL, theMessage, (void *)&thread0);
     pthread_create(&thread1, NULL, theMessageSecondThread, (void *)&thread1);
     pthread_join(thread1, NULL);
+
     return 0;
 }
 
