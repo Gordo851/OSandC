@@ -7,11 +7,17 @@
 
 pthread_mutex_t mutex;
 pthread_cond_t conditional;
+pthread_mutex_t mutex1;
+pthread_cond_t conditional1;
 
 
 void* theMessage(void *ID)
 {
+    pthread_mutex_lock(&mutex1);
     printf("I am the first thread. My thread ID: %d. My pID: %d. The first message\n\n", (int)pthread_self(), (int)getpid());
+    pthread_mutex_unlock(&mutex1);
+    sleep(1);
+    pthread_cond_signal(&conditional1);
 
     pthread_mutex_lock(&mutex);
     pthread_cond_wait(&conditional, &mutex);
@@ -21,8 +27,10 @@ void* theMessage(void *ID)
 }
 void* theMessageSecondThread(void *ID)
 {
+    pthread_mutex_lock(&mutex1);
+    pthread_cond_wait(&conditional1, &mutex1);
     printf("I am the second thread. My thread ID: %d. My pID: %d. The first message\n\n", (int)pthread_self(), (int)getpid());
-
+    pthread_mutex_unlock(&mutex1);
 
     pthread_mutex_lock(&mutex);
     printf("I am the second thread. My ID: %d. My pID: %d. The second message\n\n", (int)pthread_self(), (int)getpid());
