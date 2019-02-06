@@ -16,7 +16,6 @@ void* theMessage(void *ID)
     pthread_mutex_lock(&mutex1);
     printf("I am the first thread. My thread ID: %d. My pID: %d. The first message\n\n", (int)pthread_self(), (int)getpid());
     pthread_mutex_unlock(&mutex1);
-    sleep(1);
     pthread_cond_signal(&conditional1);
 
     pthread_mutex_lock(&mutex);
@@ -46,8 +45,9 @@ int main()
     pthread_t thread0;
     pthread_t thread1;
     printf("Hello\n");
-    pthread_create(&thread0, NULL, theMessage, (void *)&thread0);
+    pthread_create(&thread0, NULL, theMessage, (void *)2);
     pthread_create(&thread1, NULL, theMessageSecondThread, (void *)&thread1);
+    pthread_join(thread0, NULL);
     pthread_join(thread1, NULL);
 
     return 0;
