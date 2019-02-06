@@ -5,50 +5,26 @@
 #include <string.h>
 #include <semaphore.h>
 
-pthread_mutex_t mutex;
-pthread_cond_t conditional;
-pthread_mutex_t mutex1;
-pthread_cond_t conditional1;
-
-
-void* theMessage(void *ID)
-{
-    pthread_mutex_lock(&mutex1);
-    printf("I am the first thread. My thread ID: %d. My pID: %d. The first message\n\n", (int)pthread_self(), (int)getpid());
-    pthread_mutex_unlock(&mutex1);
-    pthread_cond_signal(&conditional1);
-
-    pthread_mutex_lock(&mutex);
-    pthread_cond_wait(&conditional, &mutex);
-    printf("I am the first thread. My ID: %d. My pID: %d. The second message\n\n", (int)pthread_self(), (int)getpid());
-    pthread_mutex_unlock(&mutex);
-    pthread_exit(NULL);
-}
 void* theMessageSecondThread(void *ID)
 {
-    pthread_mutex_lock(&mutex1);
-    pthread_cond_wait(&conditional1, &mutex1);
+    void* a;
     printf("I am the second thread. My thread ID: %d. My pID: %d. The first message\n\n", (int)pthread_self(), (int)getpid());
-    pthread_mutex_unlock(&mutex1);
-
-    pthread_mutex_lock(&mutex);
     printf("I am the second thread. My ID: %d. My pID: %d. The second message\n\n", (int)pthread_self(), (int)getpid());
-    pthread_mutex_unlock(&mutex);
-    pthread_cond_signal(&conditional);
-    pthread_exit(NULL);
+    pthread_exit(a);
 }
 
 
 
 int main()
 {
-    pthread_t thread0;
+    void* ret = NULL;
     pthread_t thread1;
-    printf("Hello\n");
-    pthread_create(&thread0, NULL, theMessage, (void *)2);
-    pthread_create(&thread1, NULL, theMessageSecondThread, (void *)&thread1);
-    pthread_join(thread0, NULL);
-    pthread_join(thread1, NULL);
+    pthread_create(&thread1, NULL, theMessageSecondThread, NULL);
+    pthread_join(thread1, ret);
+    printf("I am the first thread. My thread ID: %d. My pID: %d. The first message\n\n", (int)pthread_self(), (int)getpid());
+    printf("I am the first thread. My ID: %d. My pID: %d. The second message\n\n", (int)pthread_self(), (int)getpid());
+
+
 
     return 0;
 }
