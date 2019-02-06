@@ -17,3 +17,7 @@ I think that i solved the part 1 & 2 of the task ...
 i will update the files with comments (tomorrow because i am really tired now)to help you understand my code.
 I uploaded them so you can check everything.
 If my code is ok we only have to implement the infinity stack and we are done.
+
+...................................................................................................
+
+Just tyding up the folders, not change to code yet!
