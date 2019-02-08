@@ -2,15 +2,17 @@
 #include <unistd.h>
 #include <pthread.h>
 
-int done;
+int done = 0;
 
 void* theMessageSecondThread(void *ID)
 {
-    void* a;
+
     printf("I am the second thread. My thread ID: %d. My pID: %d. The first message\n\n", (int)pthread_self(), (int)getpid());
-    while (done == 0);
+    while (done == 0);{
+        //nothing
+    }
     printf("I am the second thread. My ID: %d. My pID: %d. The second message\n\n", (int)pthread_self(), (int)getpid());
-    pthread_exit(a);
+    pthread_exit(0);
 }
 
 
@@ -26,4 +28,3 @@ int main()
 
     return 0;
 }
-
