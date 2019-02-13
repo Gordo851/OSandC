@@ -11,7 +11,7 @@ void* spawned_thread(void *arg)
 {
     // Infinite while loop that puts thread to sleep, checks value at static memory location every 0.1 seconds, if it changes from 0, the next block of code is executed
      while(*sig_ptr == 0){
-        sleep(0.1);
+
     }
 
     // If the value changes, this spawned thread executes this block and terminates. Since the main thread only writes a non-zero entry to the shared static memory once it has..

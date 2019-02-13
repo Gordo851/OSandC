@@ -20,12 +20,15 @@ void *thread_function(void *args) {
 
 main()
 {
-
+    int count;
+    int num = 100;
     pthread_mutex_lock(&lock); //Lock mutex before spawn created
 	pthread_t spawn_thread;
     pthread_create(&spawn_thread, NULL, thread_function, NULL); // create spawn thread
+    for(count = 1; count < num; count++) {
     printf("I am the first thread. My thread ID: %d. My pID: %d. The first message\n\n", (int)pthread_self(), (int)getpid());
     printf("I am the first thread. My ID: %d. My pID: %d. The second message\n\n", (int)pthread_self(), (int)getpid()); // print messages
+    }
     pthread_mutex_unlock(&lock); // unlock mutex
     pthread_join(spawn_thread, NULL); // wait for spawned thread to exit before returning
 

@@ -13,6 +13,7 @@ void Problem3()
     int count = 0;
     int count1 = 0;
     char buf;
+
     int fd1[2];
     if(pipe(fd1)==-1)
     {
@@ -34,7 +35,7 @@ void Problem3()
             printf("Second Message: I am now complete. My pID is:%d \n", getpid());
         }
 
-        close(fd1[1]);
+        close(fd1[0]);
         exit(0);
     }
     if (x > 0) //This is the parent.
