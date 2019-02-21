@@ -24,9 +24,19 @@ char * getTimeStamp() {
  * @param shname Name of SHM
  * @return file descriptor
  */
+ # IPC_CREATE means that the program will make a new shm space. Without that key the system hunts for an already existing shm. Like in loadSHM below
+ # 0666 sets read/write permissions
 int createSHM(char * shname)
 {
-#error FILL IN
+    int key = 9999;
+    int shmId;
+    shmId = shmget(key, sizeof(SHMstruct), IPC_CREAT | 0666);
+    if (shmId == -1)
+    {
+        printf("Failed");
+        exit();
+    }
+    return shmId;
 }
 
 /* Load Shared Memory
@@ -39,7 +49,15 @@ int createSHM(char * shname)
  */
 int loadSHM(char * shname)
 {
-#error FILL IN
+    int shmId;
+    int key = 9999;
+    shmId = shmget(key, sizeof(SHMstruct), 0666);
+    if (shmId == -1)
+    {
+        printf("Failed");
+        exit();
+    }
+    return shmId;
 }
 
 /* Access Existing SHM
@@ -50,8 +68,14 @@ int loadSHM(char * shname)
  * @param fd File descriptor of existing SHM
  * @return Pointer to SHMstruct
  */
-SHMstruct * accessSHM(int fd) {
-#error FILL IN
+SHMstruct * accessSHM(int fd)
+{
+    shname * ptr = (shname*) shmat(fd, NULL, 0);
+    if(ptr == (void*)-1)
+    {
+        printf("Error");
+    }
+    return ptr;
 }
 
 /* Initialise SHM
@@ -64,7 +88,8 @@ SHMstruct * accessSHM(int fd) {
  * @return Pointer to SHMstruct
  */
 SHMstruct * initSHM(int fd, SHMstruct *data) {
-#error FILL IN
+    accessSHM(fd);
+    *ptr=SHMstruct;
 }
 
 /* De-allocate SHMstruct
@@ -75,7 +100,7 @@ SHMstruct * initSHM(int fd, SHMstruct *data) {
  */
 void clearSHM(SHMstruct * shm)
 {
-#error FILL IN
+
 }
 
 /* Close SHM file descriptor
@@ -86,7 +111,8 @@ void clearSHM(SHMstruct * shm)
  */
 void closeSHM(int fd)
 {
-#error FILL IN
+    shname * ptr = (shname*) shmat(fd, NULL, 0);
+    int shmdt(ptr);
 }
 
 /* Unlink SHM
@@ -98,5 +124,5 @@ void closeSHM(int fd)
  */
 void destroySHM(char * shname)
 {
-#error FILL IN
+    shmctl(shmId, IPC_RMID, NULL);
 }
