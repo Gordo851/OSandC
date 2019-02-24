@@ -9,7 +9,8 @@ int main()
     int shmFd;
     SHMstruct initData = { 1, false, false};
     SHMstruct * shmData;
-    
+    int ticket = 1;
+
     fp = fopen("/tmp/server.log", "a");
     if(fp == NULL) {
         perror("fopen");
@@ -21,10 +22,19 @@ int main()
     shmData = initSHM( shmFd, &initData );
 
     // Remember the condition value!!!
-    while()
+    while(shmData->isTaken == true && shmData->soldOut == false)
     {
-        // Fill in here
+        SHMstruct newdata = {ticket, false, false};
+        shmData = initSHM(shmFd, &newdata);
+        fprintf(stdout, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
+        if (ticket == 11)
+        {
+            SHMstruct newdata = {ticket, false, true};
+            shmData = initSHM(shmFd, &newdata);
+        }
+        ticket ++;
     }
+
 
     fprintf(stderr, "Shared Memory Area destroyed\n");
     clearSHM(shmData);

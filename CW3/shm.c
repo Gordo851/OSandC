@@ -24,19 +24,15 @@ char * getTimeStamp() {
  * @param shname Name of SHM
  * @return file descriptor
  */
- # IPC_CREATE means that the program will make a new shm space. Without that key the system hunts for an already existing shm. Like in loadSHM below
- # 0666 sets read/write permissions
 int createSHM(char * shname)
 {
-    int key = 9999;
-    int shmId;
-    shmId = shmget(key, sizeof(SHMstruct), IPC_CREAT | 0666);
-    if (shmId == -1)
+    int fd = shm_open(shname, O_RDONLY, O_CREAT | S_IRUSR | S_IWUSR);
+    if (fd == -1)
     {
-        printf("Failed");
-        exit();
+        perror("open");
+        return 5;
     }
-    return shmId;
+    return fd;
 }
 
 /* Load Shared Memory
@@ -49,15 +45,13 @@ int createSHM(char * shname)
  */
 int loadSHM(char * shname)
 {
-    int shmId;
-    int key = 9999;
-    shmId = shmget(key, sizeof(SHMstruct), 0666);
-    if (shmId == -1)
+    int fd = shm_open(shname, O_RDONLY, S_IRUSR | S_IWUSR);
+    if (fd == -1)
     {
-        printf("Failed");
-        exit();
+        perror("open");
+        return 5;
     }
-    return shmId;
+    return fd;
 }
 
 /* Access Existing SHM
@@ -70,12 +64,13 @@ int loadSHM(char * shname)
  */
 SHMstruct * accessSHM(int fd)
 {
-    shname * ptr = (shname*) shmat(fd, NULL, 0);
-    if(ptr == (void*)-1)
+    void *addr = mmap(NULL, ftruncate(fd, 9), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (addr == MAP_FAILED)
     {
-        printf("Error");
+        perror("mmap");
+        return 20;
     }
-    return ptr;
+    return addr;
 }
 
 /* Initialise SHM
@@ -87,11 +82,11 @@ SHMstruct * accessSHM(int fd)
  * @param fd File descriptor of SHM
  * @return Pointer to SHMstruct
  */
-SHMstruct * initSHM(int fd, SHMstruct *data) {
+SHMstruct * initSHM(int fd, SHMstruct *data)
+{
     accessSHM(fd);
-    *ptr=SHMstruct;
+    addr=data;
 }
-
 /* De-allocate SHMstruct
  *
  * Function de-allocates an already existing SHMstruct.
@@ -100,7 +95,7 @@ SHMstruct * initSHM(int fd, SHMstruct *data) {
  */
 void clearSHM(SHMstruct * shm)
 {
-
+    free(shm);
 }
 
 /* Close SHM file descriptor
@@ -111,8 +106,7 @@ void clearSHM(SHMstruct * shm)
  */
 void closeSHM(int fd)
 {
-    shname * ptr = (shname*) shmat(fd, NULL, 0);
-    int shmdt(ptr);
+    close(fd);
 }
 
 /* Unlink SHM
@@ -124,5 +118,5 @@ void closeSHM(int fd)
  */
 void destroySHM(char * shname)
 {
-    shmctl(shmId, IPC_RMID, NULL);
+    shm_unlink(shname);
 }

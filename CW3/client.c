@@ -18,12 +18,16 @@ int main()
     }
 
     shmFd = loadSHM(SHNAME);
-    shmData = accessSHM(shmFd); 
+    shmData = accessSHM(shmFd);
 
     // Remember the condition value!!!
-    while()
+    while(shmData->isTaken == false && shmData->soldOut == false)
     {
-        // Fill in here
+        int thisTicket = shmData->ticket;
+        int max = rand();
+        int actual = max/1000;
+        sleep(actual);
+        shmData->isTaken = true;
     }
 
     clearSHM(shmData);
