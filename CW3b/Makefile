@@ -3,21 +3,21 @@ all: server client
 ifdef OSX
 CC      = gcc
 CCFLAGS = -Wall
-LIBS    = 
+LIBS    =
 
 else
 CC      = gcc
 CCFLAGS = -Wall
-LIBS    = -lrt
+LIBS    += -pthread -lrt
 endif
 
-server: server.c shm.h shm.o
+server: server.c sem.c shm.h sem.h shm.o
 	$(CC) $(CCFLAGS) $(LIBS) shm.o -o $@ $<
 
-client: client.c shm.h shm.o
+client: client.c sem.c shm.h sem.h shm.o
 	$(CC) $(CCFLAGS) $(LIBS) shm.o -o $@ $<
 
-shm.o: shm.c	
+shm.o: shm.c
 	$(CC) $(CCFLAGS) $(LIBS) -c $<
 
 clean:

@@ -2,6 +2,7 @@
 #define _shm_h_
 
 #include <stdbool.h>
+#include <pthread.h>
 
 #define SHNAME "/shmserver" // shared memory
 #define MAX_TICKETS 10

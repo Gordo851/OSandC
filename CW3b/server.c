@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <semaphore.h>
 #include "shm.h"
+#include "sem.h"
+#include <sys/stat.h>
 
 int main()
 {
@@ -10,6 +12,7 @@ int main()
     SHMstruct initData = { 0, false, false};
     SHMstruct * shmData;
     int ticket = 1;
+    sem_t * Semaphore;
 
     fp = fopen("./tmp/server.log", "a");
     if(fp == NULL) {
@@ -20,7 +23,7 @@ int main()
     fprintf(stderr, "Shared Memory Area created\n");
     shmFd = createSHM(SHNAME);
     shmData = initSHM( shmFd, &initData );
-
+    Semaphore = createSemaphore(SEMNAME);
     // Remember the condition value!!!
     while(shmData->soldOut == false)
     {

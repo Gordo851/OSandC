@@ -4,6 +4,7 @@
 
 
 #include "shm.h"
+#include "sem.h"
 
 int main()
 {
@@ -19,7 +20,7 @@ int main()
 
     shmFd = loadSHM(SHNAME);
     shmData = accessSHM(shmFd);
-
+    sem_t * semaphore = createSemaphore(SEMNAME);
     // Remember the condition value!!!
     while(shmData->soldOut == false)
     {
@@ -27,6 +28,7 @@ int main()
         {
             sleep(1);
         }
+        lockSemaphore(SEMNAME);
         if(shmData->ticket > 0)
         {
             fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is: %p\n", getTimeStamp(), shmData->ticket, shmData);
@@ -34,6 +36,7 @@ int main()
         }
         sleep(1);
         shmData->isTaken = true;
+        unlockSemaphore(SEMNAME);
     }
 
     clearSHM(shmData);
