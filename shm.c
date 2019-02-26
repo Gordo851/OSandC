@@ -26,10 +26,10 @@ char * getTimeStamp() {
  */
 int createSHM(char * shname)
 {
-    int fd = shm_open(SHNAME, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    int fd = shm_open(shname, O_CREAT | O_RDWR, 0666);
     if (fd == -1)
     {
-        perror("shm_open");
+        perror("open");
         return 5;
     }
     return fd;
@@ -45,7 +45,7 @@ int createSHM(char * shname)
  */
 int loadSHM(char * shname)
 {
-    int fd = shm_open(SHNAME, O_RDWR, S_IRUSR | S_IWUSR);
+    int fd = shm_open(shname, O_RDONLY, S_IRUSR | S_IWUSR);
     if (fd == -1)
     {
         perror("open");
@@ -64,7 +64,7 @@ int loadSHM(char * shname)
  */
 SHMstruct * accessSHM(int fd)
 {
-    void *addr = mmap(NULL, sizeof(struct SHM), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    void *addr = mmap(NULL, 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (addr == MAP_FAILED)
     {
         perror("mmap");
@@ -84,9 +84,8 @@ SHMstruct * accessSHM(int fd)
  */
 SHMstruct * initSHM(int fd, SHMstruct *data)
 {
-    ftruncate(fd, sizeof(struct SHM));
     void *addr = accessSHM(fd);
-    memcpy(addr, data, sizeof(struct SHM));
+    memcpy(addr, data, sizeof(data));
     return addr;
 }
 /* De-allocate SHMstruct
@@ -97,7 +96,7 @@ SHMstruct * initSHM(int fd, SHMstruct *data)
  */
 void clearSHM(SHMstruct * shm)
 {
-    munmap(shm, sizeof(struct SHM));
+    free(shm);
 }
 
 /* Close SHM file descriptor

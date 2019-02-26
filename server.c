@@ -7,11 +7,11 @@ int main()
 {
     FILE * fp;
     int shmFd;
-    SHMstruct initData = { 0, false, false};
+    SHMstruct initData = { 1, false, false};
     SHMstruct * shmData;
     int ticket = 1;
 
-    fp = fopen("./tmp/server.log", "a");
+    fp = fopen("/tmp/server.log", "a");
     if(fp == NULL) {
         perror("fopen");
         return EXIT_FAILURE;
@@ -22,17 +22,12 @@ int main()
     shmData = initSHM( shmFd, &initData );
 
     // Remember the condition value!!!
-    while(shmData->soldOut == false)
+    while(shmData->isTaken == true && shmData->soldOut == false)
     {
-        while(shmData->isTaken == false)
-        {
-            sleep(1);
-        }
-        shmData->isTaken = false;
-        shmData->ticket = ticket;
-        fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is %p\n", getTimeStamp(), ticket, shmData);
-        fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
-        if (ticket == 10)
+        SHMstruct newdata = {ticket, false, false};
+        shmData = initSHM(shmFd, &newdata);
+        fprintf(stdout, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
+        if (ticket == 11)
         {
             SHMstruct newdata = {ticket, false, true};
             shmData = initSHM(shmFd, &newdata);
