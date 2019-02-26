@@ -8,7 +8,7 @@
 
 sem_t * createSemaphore(char * sem)
 {
-    sem_t * semaphore = sem_open(sem, O_CREAT | O_EXCL, 0644);
+    sem_t * semaphore = sem_open(sem, O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
     return semaphore;
 }
 
@@ -20,14 +20,12 @@ sem_t * loadSemaphore(char * sem)
 
 void unlockSemaphore(sem_t * sem)
 {
-    int n = sem_post(sem);
-    if (n!=0) perror{"sem_wait failed"};
+    sem_post(sem);
 }
 
 void lockSemaphore(sem_t * sem)
 {
-    int n = sem_wait(sem);
-    if (n!=0) perror{"sem_post failed"};
+    sem_wait(sem);
 }
 
 

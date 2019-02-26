@@ -11,6 +11,7 @@ int main()
     FILE * fp;
     int shmFd;
     SHMstruct * shmData;
+    sem_t * Semaphore;
 
     fp = fopen("./tmp/client.log", "a");
     if(fp == NULL) {
@@ -20,15 +21,16 @@ int main()
 
     shmFd = loadSHM(SHNAME);
     shmData = accessSHM(shmFd);
-    sem_t * semaphore = createSemaphore(SEMNAME);
+    Semaphore = loadSemaphore(SEMNAME);
     // Remember the condition value!!!
     while(shmData->soldOut == false)
     {
+        lockSemaphore(Semaphore);
         while(shmData->isTaken == true)
         {
             sleep(1);
         }
-        lockSemaphore(SEMNAME);
+
         if(shmData->ticket > 0)
         {
             fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is: %p\n", getTimeStamp(), shmData->ticket, shmData);
@@ -36,7 +38,7 @@ int main()
         }
         sleep(1);
         shmData->isTaken = true;
-        unlockSemaphore(SEMNAME);
+        unlockSemaphore(Semaphore);
     }
 
     clearSHM(shmData);

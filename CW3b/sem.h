@@ -4,13 +4,13 @@
 #include <semaphore.h>
 #include <pthread.h>
 
-#define SEMNAME "/semaphore"
+#define SEMNAME "semaphore"
 
 
-extern sem_t * createSemaphore(char *semname);
-extern sem_t * loadSemaphore(char *semname);
+extern sem_t * createSemaphore(char * semname);
+extern sem_t * loadSemaphore(char * semname);
 
-extern void unlockSemaphore(char *semname);
-extern void lockSemaphore(char *semname);
+extern void unlockSemaphore(sem_t *semname);
+extern void lockSemaphore(sem_t *semname);
 
 #endif

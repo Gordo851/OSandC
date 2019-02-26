@@ -8,16 +8,19 @@ LIBS    =
 else
 CC      = gcc
 CCFLAGS = -Wall
-LIBS    += -pthread -lrt
+LIBS    += -lrt -pthread
 endif
 
-server: server.c sem.c shm.h sem.h shm.o
-	$(CC) $(CCFLAGS) $(LIBS) shm.o -o $@ $<
+server: server.c shm.h shm.o sem.c sem.h sem.o
+	$(CC) $(CCFLAGS) $(LIBS) shm.o sem.o -o $@ $<
 
-client: client.c sem.c shm.h sem.h shm.o
-	$(CC) $(CCFLAGS) $(LIBS) shm.o -o $@ $<
+client: client.c shm.h shm.o sem.c sem.h sem.o
+	$(CC) $(CCFLAGS) $(LIBS) shm.o sem.o -o $@ $<
 
 shm.o: shm.c
+	$(CC) $(CCFLAGS) $(LIBS) -c $<
+
+sem.o: sem.c
 	$(CC) $(CCFLAGS) $(LIBS) -c $<
 
 clean:
