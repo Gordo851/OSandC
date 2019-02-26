@@ -24,6 +24,7 @@ int main()
     while(shmData->isTaken == false && shmData->soldOut == false)
     {
         int thisTicket = shmData->ticket;
+        fprintf(stdout, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,thisTicket);
         int max = rand();
         int actual = max/1000;
         sleep(actual);

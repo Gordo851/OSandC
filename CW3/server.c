@@ -11,7 +11,7 @@ int main()
     SHMstruct * shmData;
     int ticket = 1;
 
-    fp = fopen("/tmp/server.log", "a");
+    fp = fopen("./tmp/server.log", "a");
     if(fp == NULL) {
         perror("fopen");
         return EXIT_FAILURE;
@@ -22,8 +22,9 @@ int main()
     shmData = initSHM( shmFd, &initData );
 
     // Remember the condition value!!!
-    while(shmData->isTaken == true && shmData->soldOut == false)
+    while(shmData->soldOut == false)
     {
+        if
         SHMstruct newdata = {ticket, false, false};
         shmData = initSHM(shmFd, &newdata);
         fprintf(stdout, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
