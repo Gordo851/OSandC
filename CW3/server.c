@@ -7,7 +7,7 @@ int main()
 {
     FILE * fp;
     int shmFd;
-    SHMstruct initData = { 1, false, false};
+    SHMstruct initData = { 0, false, false};
     SHMstruct * shmData;
     int ticket = 1;
 
@@ -24,11 +24,15 @@ int main()
     // Remember the condition value!!!
     while(shmData->soldOut == false)
     {
-        if
-        SHMstruct newdata = {ticket, false, false};
-        shmData = initSHM(shmFd, &newdata);
-        fprintf(stdout, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
-        if (ticket == 11)
+        while(shmData->isTaken == false)
+        {
+            sleep(1);
+        }
+        shmData->isTaken = false;
+        shmData->ticket = ticket;
+        fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is %p\n", getTimeStamp(), ticket, shmData);
+        fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
+        if (ticket == 10)
         {
             SHMstruct newdata = {ticket, false, true};
             shmData = initSHM(shmFd, &newdata);

@@ -45,7 +45,7 @@ int createSHM(char * shname)
  */
 int loadSHM(char * shname)
 {
-    int fd = shm_open(SHNAME, O_RDONLY, S_IRUSR | S_IWUSR);
+    int fd = shm_open(SHNAME, O_RDWR, S_IRUSR | S_IWUSR);
     if (fd == -1)
     {
         perror("open");
