@@ -10,6 +10,7 @@ int main()
     SHMstruct initData = { 0, false, false};
     SHMstruct * shmData;
     int ticket = 1;
+    
 
     fp = fopen("./tmp/server.log", "a");
     if(fp == NULL) {
@@ -20,24 +21,52 @@ int main()
     fprintf(stderr, "Shared Memory Area created\n");
     shmFd = createSHM(SHNAME);
     shmData = initSHM( shmFd, &initData );
+    shmData->ticket = ticket;
+    shmData->soldOut = false;
+    shmData->isTaken = false;
+    
 
     // Remember the condition value!!!
     while(shmData->soldOut == false)
     {
-        while(shmData->isTaken == false)
+        if(shmData->isTaken== true)
         {
-            sleep(1);
+
+            shmData->ticket = ticket;
+            shmData->isTaken = false;
+
+            if(shmData-> ticket <= MAX_TICKETS){
+                shmData->soldOut = false;
+            } else{
+                shmData->soldOut = true;
+            }
+            fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is %p\n", getTimeStamp(), ticket-1, shmData);
+            fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket-1);
+
+            ticket++;
+
         }
-        shmData->isTaken = false;
-        shmData->ticket = ticket;
-        fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is %p\n", getTimeStamp(), ticket, shmData);
-        fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
-        if (ticket == 10)
-        {
-            SHMstruct newdata = {ticket, false, true};
-            shmData = initSHM(shmFd, &newdata);
+
+        if(ticket == 1){
+            ticket++;
         }
-        ticket ++;
+
+        sleep(1);
+
+        // while(shmData->isTaken == false)
+        // {
+        //     sleep(1);
+        // }
+        // shmData->isTaken = false;
+        // shmData->ticket = ticket;
+        // fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is %p\n", getTimeStamp(), ticket, shmData);
+        // fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
+        // if (ticket == 10)
+        // {
+        //     SHMstruct newdata = {ticket, false, true};
+        //     shmData = initSHM(shmFd, &newdata);
+        // }
+        // ticket ++;
     }
 
 
