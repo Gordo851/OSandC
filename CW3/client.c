@@ -23,17 +23,19 @@ int main()
     // Remember the condition value!!!
     while(shmData->soldOut == false)
     {
-        while(shmData->isTaken == true)
-        {
-            sleep(1);
-        }
-        if(shmData->ticket > 0)
-        {
-            fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is: %p\n", getTimeStamp(), shmData->ticket, shmData);
-            fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,shmData->ticket);
-        }
-        sleep(1);
-        shmData->isTaken = true;
+
+            while(shmData->isTaken == false)
+            {
+                fprintf(stdout, "Ticket %d is available for purchase, please wait while i deliborate... \n",shmData->ticket);
+                int random_time = rand() %5;
+                sleep(random_time);
+                fprintf(stdout, "Bought at %s. number is %d. My address: %p\n", getTimeStamp(), shmData->ticket, shmData);
+                fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,shmData->ticket);
+                shmData->isTaken = true;
+            }
+
+
+
     }
 
     clearSHM(shmData);
