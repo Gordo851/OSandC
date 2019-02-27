@@ -6,7 +6,7 @@
 #include "sem.h"
 
 
-#include <sys/stat.h> 
+#include <sys/stat.h>
 #include <semaphore.h>
 #include <pthread.h>
 #include <fcntl.h>
@@ -21,7 +21,7 @@ int main()
     FILE * fp;
     int shmFd;
     SHMstruct * shmData;
-    
+
 
     fp = fopen("./tmp/client.log", "a");
     if(fp == NULL) {
@@ -78,6 +78,7 @@ int main()
         //     fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,shmData->ticket);
         // }
         // sleep(1);
+        // shmData->isTaken = true;
         // shmData->isTaken = true;
     }
 
