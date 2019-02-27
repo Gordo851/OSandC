@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <semaphore.h>
 #include "shm.h"
+#include "sem.h"
 
 int main()
 {
@@ -10,6 +11,7 @@ int main()
     SHMstruct initData = { 0, false, false};
     SHMstruct * shmData;
     int ticket = 1;
+    sem_t *sem;
 
     fp = fopen("./tmp/server.log", "a");
     if(fp == NULL) {
@@ -20,24 +22,38 @@ int main()
     fprintf(stderr, "Shared Memory Area created\n");
     shmFd = createSHM(SHNAME);
     shmData = initSHM( shmFd, &initData );
+    shmData->ticket = 1;
+
+    fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is %p\n", getTimeStamp(), ticket, shmData);
+    fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
+    shmData->ticket = ticket;
+    shmData->soldOut = false;
+    shmData->isTaken = false;
+    sem = createSemaphore(SEMNAME);
 
     // Remember the condition value!!!
     while(shmData->soldOut == false)
     {
-        while(shmData->isTaken == false)
+        if(shmData->isTaken== true)
         {
-            sleep(1);
+            fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is %p\n", getTimeStamp(), ticket, shmData);
+            fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
+            shmData->ticket = ticket;
+            shmData->isTaken = false;
+
+            if(shmData-> ticket < MAX_TICKETS){
+                shmData->soldOut = false;
+            } else{
+                shmData->soldOut = true;
+            }
+            ticket++;
+
         }
-        shmData->isTaken = false;
-        shmData->ticket = ticket;
-        fprintf(stdout, "Ticket was issued at %s. The ticket number is %d. My address is %p\n", getTimeStamp(), ticket, shmData);
-        fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,ticket);
-        if (ticket == 10)
-        {
-            SHMstruct newdata = {ticket, false, true};
-            shmData = initSHM(shmFd, &newdata);
+
+        if(ticket == 1){
+            ticket++;
         }
-        ticket ++;
+
     }
 
 
