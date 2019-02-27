@@ -24,10 +24,9 @@ int main()
     // Remember the condition value!!!
     while(shmData->soldOut == false)
     {
-          sem_post(sem);
+           sem_wait(sem);
             while(shmData->isTaken == false)
             {
-
                 fprintf(stdout, "Ticket %d is available for purchase, please wait while i deliborate... \n",shmData->ticket);
                 int random_time = rand() %5;
                 sleep(random_time);
@@ -35,7 +34,7 @@ int main()
                 fprintf(fp, "Ticket was issued at %s. The ticket number is %d.\n", getTimeStamp() ,shmData->ticket);
                 shmData->isTaken = true;
             }
-           sem_wait(sem);
+          sem_post(sem);
 
     }
 
